@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Async User Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #userData {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Async User Profile</h1>
+        <button onclick="fetchUserProfile('user123')">Fetch Profile (Callbacks)</button>
+        <button onclick="fetchUserProfilePromise1('user456')">Fetch Profile (Promises)</button>
+        <button onclick="fetchUserProfileAsync('user789')">Fetch Profile (Async/Await)</button>
+        <div id="userData"></div>
+    </div>
+
+    <script>
+        // Mock API URL
+        const apiEndpoint = '/api/user/';
+
+        // Callback-based approach
+        function fetchUserProfileCallback(userId, callback) {
+            console.log('Fetching user profile (Callbacks)...');
+            setTimeout(() => {
+                // Simulate API call
+                const userData = {
+                    id: userId,
+                    name: 'John Doe',
+                    email: 'john.doe@example.com'
+                };
+                
+                // Simulate API delay
+                const success = true; // Change to false to simulate error
+                
+                if (success) {
+                    callback(null, userData);
+                } else {
+                    callback(new Error('Failed to fetch user profile'), null);
+                }
+            }, 2000);
+        }
+
+        // Promise-based approach
+        function fetchUserProfilePromise(userId) {
+            console.log('Fetching user profile (Promises)...');
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const userData = {
+                        id: userId,
+                        name: 'Jane Smith',
+                        email: 'jane.smith@example.com'
+                    };
+                    
+                    const success = false; // Change to false to simulate error
+                    
+                    if (success) {
+                        resolve(userData);
+                    } else {
+                        reject(new Error('Failed to fetch user profile'));
+                    }
+                }, 2000);
+            });
+        }
+
+        // Async/Await approach
+        async function fetchUserProfileAsync1(userId) {
+            console.log('Fetching user profile (Async/Await)...');
+            try {
+                const userData = await new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        const success = true; // Change to false to simulate error
+                        if (success) {
+                            resolve({
+                                id: userId,
+                                name: 'Bob Johnson',
+                                email: 'bob.johnson@example.com'
+                            });
+                        } else {
+                            reject(new Error('Failed to fetch user profile'));
+                        }
+                    }, 2000);
+                });
+                return userData;
+            } catch (error) {
+                console.error('Error:', error);
+                throw error;
+            }
+        }
+
+        // Display functions
+        function displayUserProfile(userData) {
+            const displayDiv = document.getElementById('userData');
+            displayDiv.innerHTML += `
+                <h2>User Profile</h2>
+                <p>ID: ${userData.id}</p>
+                <p>Name: ${userData.name}</p>
+                <p>Email: ${userData.email}</p>
+                <hr>
+            `;
+        }
+
+        function displayError(error) {
+            const displayDiv = document.getElementById('userData');
+            displayDiv.innerHTML += `
+                <p style="color: red;">Error: ${error.message}</p>
+                <hr>
+            `;
+        }
+
+        // Callback-based function
+        function fetchUserProfile(userId) {
+            fetchUserProfileCallback(userId, (error, userData) => {
+                if (error) {
+                    displayError(error);
+                } else {
+                    displayUserProfile(userData);
+                }
+            });
+        }
+
+        // Promise-based function
+        function fetchUserProfilePromise1(userId) {
+            fetchUserProfilePromise(userId)
+                .then(userData => displayUserProfile(userData))
+                .catch(error => displayError(error));
+        }
+
+        // Async/Await-based function
+        async function fetchUserProfileAsync(userId) {
+            try {
+                const userData = await fetchUserProfileAsync(userId);
+                displayUserProfile(userData);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+    </script>
+</body>
+</html>
